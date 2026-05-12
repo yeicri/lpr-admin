@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imagen Flyer — Lameza Permit Rescue</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:#111;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  min-height:100vh;
+  padding:32px 16px 48px;
+  gap:24px;
+}
+
+/* ─── CONTROLES (no aparecen en la imagen) ─── */
+.controls{
+  width:100%;max-width:600px;
+  background:#1a1a1a;
+  border:1px solid #2a2a2a;
+  border-radius:12px;
+  padding:20px 24px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.ctrl-title{font-size:.8rem;font-weight:700;color:#c9a84c;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.ctrl-row{display:flex;gap:10px;align-items:center}
+.ctrl-label{font-size:.78rem;color:#777;min-width:80px}
+.ctrl-input{
+  flex:1;background:#111;border:1px solid #2a2a2a;color:#fff;
+  padding:9px 13px;border-radius:7px;font-size:.85rem;
+  font-family:monospace;outline:none;transition:.2s;
+}
+.ctrl-input:focus{border-color:#c9a84c}
+.ctrl-input::placeholder{color:#444}
+.btn-update{
+  background:#c9a84c;color:#0d0d0d;border:none;
+  padding:10px 20px;border-radius:7px;font-weight:700;
+  font-size:.82rem;cursor:pointer;white-space:nowrap;transition:.2s;
+}
+.btn-update:hover{background:#e2c06b}
+.hint{font-size:.72rem;color:#555;line-height:1.5}
+
+/* ─── CARD IMAGEN (1080×1080) ─── */
+.card-wrap{
+  position:relative;
+  width:540px; /* display: mitad de 1080 */
+  height:540px;
+}
+.card{
+  width:540px;
+  height:540px;
+  background:#0a0a0a;
+  position:relative;
+  overflow:hidden;
+  border-radius:0;
+  display:flex;flex-direction:column;
+}
+
+/* Fondo decorativo */
+.card-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 80% 10%, rgba(201,168,76,.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 90%, rgba(201,168,76,.08) 0%, transparent 45%);
+  pointer-events:none;
+}
+.card-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;
+}
+.card-watermark{
+  position:absolute;
+  bottom:-16px;right:-10px;
+  font-size:7rem;font-weight:900;
+  color:rgba(255,255,255,.028);
+  letter-spacing:-4px;
+  pointer-events:none;user-select:none;
+  line-height:1;
+}
+
+/* Borde dorado top */
+.card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,#c9a84c,#e2c06b,#c9a84c);
+  z-index:10;
+}
+
+/* Contenido */
+.card-inner{
+  position:relative;z-index:2;
+  flex:1;
+  display:flex;flex-direction:column;
+  padding:32px 36px 0;
+}
+
+/* Header */
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:24px;
+}
+.card-brand{
+  display:flex;align-items:center;gap:10px;
+}
+.brand-icon{
+  width:36px;height:36px;
+  background:#c9a84c;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;
+  flex-shrink:0;
+}
+.brand-text{
+  line-height:1.1;
+}
+.brand-name{font-size:.75rem;font-weight:800;color:#c9a84c;letter-spacing:2px}
+.brand-sub{font-size:.65rem;color:#666;letter-spacing:.5px}
+.card-tag{
+  background:rgba(201,168,76,.12);
+  border:1px solid rgba(201,168,76,.3);
+  color:#c9a84c;
+  font-size:.62rem;font-weight:700;
+  padding:4px 10px;border-radius:20px;
+  letter-spacing:.8px;text-transform:uppercase;
+}
+
+/* Headline */
+.card-headline{
+  font-size:2.15rem;font-weight:900;line-height:1.12;
+  color:#fff;
+  margin-bottom:10px;
+  letter-spacing:-1px;
+}
+.card-headline em{
+  font-style:normal;color:#c9a84c;
+}
+.card-sub{
+  font-size:.82rem;color:#888;line-height:1.55;
+  max-width:340px;
+  margin-bottom:18px;
+}
+
+/* Stats mini */
+.card-stats{
+  display:flex;gap:0;
+  background:#111;
+  border:1px solid #222;
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:18px;
+}
+.cstat{
+  flex:1;text-align:center;padding:10px 0;
+  position:relative;
+}
+.cstat+.cstat::before{
+  content:'';position:absolute;left:0;top:15%;bottom:15%;
+  width:1px;background:#222;
+}
+.cstat-n{font-size:1.25rem;font-weight:900;color:#c9a84c;line-height:1}
+.cstat-l{font-size:.58rem;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* Bullets */
+.card-bullets{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;
+  margin-bottom:16px;
+}
+.cbullet{
+  display:flex;align-items:center;gap:7px;
+  background:#111;
+  border:1px solid #1e1e1e;
+  border-radius:7px;
+  padding:7px 10px;
+}
+.cbullet-icon{font-size:.9rem;flex-shrink:0}
+.cbullet-text{font-size:.7rem;color:#bbb;line-height:1.3;font-weight:500}
+
+/* ─── LINK BOX (la parte de la imagen) ─── */
+.card-link-box{
+  margin:0 -36px;
+  margin-top:auto;
+  background:linear-gradient(135deg,#110e00,#0d0d0d);
+  border-top:1px solid rgba(201,168,76,.2);
+  padding:16px 36px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-shrink:0;
+}
+.link-left{flex:1;min-width:0}
+.link-eyebrow{
+  font-size:.6rem;font-weight:700;color:#c9a84c;
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:5px;
+  display:flex;align-items:center;gap:5px;
+}
+.link-eyebrow::before{content:'🔗';font-size:.7rem}
+.link-url{
+  font-size:.72rem;
+  color:#fff;
+  font-family:monospace;
+  background:#111;
+  border:1px solid rgba(201,168,76,.25);
+  border-radius:6px;
+  padding:6px 10px;
+  word-break:break-all;
+  line-height:1.4;
+  min-height:32px;
+  display:flex;align-items:center;
+}
+.link-url.empty{color:#333;font-style:italic}
+.qr-container{
+  width:72px;height:72px;
+  background:#fff;
+  border-radius:8px;
+  padding:5px;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+.qr-container img{width:62px;height:62px;display:block}
+.qr-placeholder{
+  font-size:.55rem;color:#bbb;text-align:center;line-height:1.4;
+  padding:4px;
+}
+/* QR placeholder pattern */
+.qr-pattern{
+  position:absolute;inset:5px;
+  background-image:repeating-linear-gradient(0deg,#ddd 0,#ddd 3px,transparent 3px,transparent 7px),repeating-linear-gradient(90deg,#ddd 0,#ddd 3px,transparent 3px,transparent 7px);
+  opacity:.3;
+}
+
+/* ─── CTA BOTTOM (fuera de la card) ─── */
+.card-footer-info{
+  width:540px;
+  background:#0d0d0d;
+  border:1px solid #1a1a1a;
+  border-radius:0 0 8px 8px;
+  padding:10px 36px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cf-phone{font-size:.75rem;color:#888}
+.cf-phone span{color:#c9a84c;font-weight:700}
+.cf-wa{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#25d366;color:#fff;
+  font-weight:700;font-size:.72rem;
+  padding:7px 14px;border-radius:6px;
+  text-decoration:none;
+}
+
+/* ─── FORMATO STORY (9:16) ─── */
+.story-wrap{
+  position:relative;
+  width:304px; /* 1080/3.55 */
+}
+.story-card{
+  width:304px;
+  height:540px;
+  background:#0a0a0a;
+  position:relative;overflow:hidden;
+  border-radius:0;
+  display:flex;flex-direction:column;
+}
+.story-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,#c9a84c,#e2c06b,#c9a84c);
+  z-index:10;
+}
+.story-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 15%,rgba(201,168,76,.2) 0%,transparent 55%);
+  pointer-events:none;
+}
+.story-inner{
+  position:relative;z-index:2;flex:1;
+  display:flex;flex-direction:column;
+  padding:24px 24px 0;
+}
+.story-header{
+  display:flex;align-items:center;gap:8px;margin-bottom:20px;
+}
+.story-icon{
+  width:30px;height:30px;background:#c9a84c;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;
+}
+.story-brand-name{font-size:.65rem;font-weight:800;color:#c9a84c;letter-spacing:1.5px}
+.story-brand-loc{font-size:.58rem;color:#555;letter-spacing:.3px}
+.story-headline{
+  font-size:1.55rem;font-weight:900;line-height:1.1;
+  color:#fff;letter-spacing:-.5px;margin-bottom:8px;
+}
+.story-headline em{font-style:normal;color:#c9a84c}
+.story-sub{font-size:.7rem;color:#888;line-height:1.5;margin-bottom:14px}
+.story-stats{
+  display:flex;gap:8px;margin-bottom:14px;
+}
+.ss{
+  flex:1;background:#111;border:1px solid #1e1e1e;
+  border-radius:7px;padding:7px 6px;text-align:center;
+}
+.ss-n{font-size:1rem;font-weight:900;color:#c9a84c;line-height:1}
+.ss-l{font-size:.52rem;color:#555;text-transform:uppercase;letter-spacing:.3px;margin-top:1px}
+.story-bullets{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.sb{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(201,168,76,.06);
+  border:1px solid rgba(201,168,76,.12);
+  border-radius:6px;padding:6px 9px;
+}
+.sb-icon{font-size:.75rem}
+.sb-text{font-size:.63rem;color:#bbb;font-weight:500}
+/* story link box */
+.story-link-box{
+  margin:auto -24px 0;
+  background:linear-gradient(135deg,#110e00,#0d0d0d);
+  border-top:1px solid rgba(201,168,76,.2);
+  padding:12px 24px;
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;
+}
+.sl-left{flex:1;min-width:0}
+.sl-eyebrow{font-size:.55rem;font-weight:700;color:#c9a84c;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.sl-url{
+  font-size:.6rem;color:#fff;font-family:monospace;
+  background:#111;border:1px solid rgba(201,168,76,.2);
+  border-radius:5px;padding:5px 8px;word-break:break-all;
+  line-height:1.4;min-height:28px;display:flex;align-items:center;
+}
+.sl-url.empty{color:#333;font-style:italic}
+.sl-qr{
+  width:56px;height:56px;background:#fff;border-radius:6px;
+  padding:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+}
+.sl-qr img{width:48px;height:48px}
+
+/* labels */
+.format-label{
+  font-size:.7rem;color:#555;text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;margin-bottom:8px;
+  width:100%;max-width:600px;
+  text-align:center;
+}
+
+/* PRINT / SAVE */
+@media print{
+  body{background:#000;padding:0}
+  .controls,.format-label{display:none}
+  .card-wrap,.story-wrap{page-break-after:always}
+}
+</style>
+</head>
+<body>
+
+<!-- CONTROLES -->
+<div class="controls">
+  <div class="ctrl-title">⚙ Personalizar imagen</div>
+  <div class="ctrl-row">
+    <span class="ctrl-label">🔗 Link URL</span>
+    <input class="ctrl-input" id="linkInput" placeholder="https://tu-link-del-flyer.com" oninput="updateAll(this.value)">
+    <button class="btn-update" onclick="updateAll(document.getElementById('linkInput').value)">Actualizar</button>
+  </div>
+  <div class="hint">Pega el link del flyer arriba → el URL y el QR se actualizan en ambas imágenes automáticamente.</div>
+</div>
+
+<!-- IMAGEN 1: CUADRADA 1080×1080 (para Instagram / Facebook) -->
+<div class="format-label">📸 Formato cuadrado — Instagram / Facebook (1080×1080)</div>
+<div class="card-wrap">
+  <div class="card" id="card-square">
+    <div class="card-bg"></div>
+    <div class="card-grid"></div>
+    <div class="card-watermark">LAMEZA</div>
+
+    <div class="card-inner">
+      <!-- Header -->
+      <div class="card-header">
+        <div class="card-brand">
+          <div class="brand-icon">🔑</div>
+          <div class="brand-text">
+            <div class="brand-name">LAMEZA PERMIT RESCUE</div>
+            <div class="brand-sub">Tampa Bay, Florida · (813) 531-3712</div>
+          </div>
+        </div>
+        <div class="card-tag">Tampa Bay</div>
+      </div>
+
+      <!-- Headline -->
+      <div class="card-headline">
+        ¿Permiso<br>bloqueado?<br><em>Lo rescatamos.</em>
+      </div>
+      <p class="card-sub">Permisos rechazados, comentarios sin respuesta, inspecciones fallidas y liens — te guiamos hasta cerrar el caso.</p>
+
+      <!-- Stats -->
+      <div class="card-stats">
+        <div class="cstat"><div class="cstat-n">200+</div><div class="cstat-l">Rescatados</div></div>
+        <div class="cstat"><div class="cstat-n">98%</div><div class="cstat-l">Resolución</div></div>
+        <div class="cstat"><div class="cstat-n">15+</div><div class="cstat-l">Años Tampa</div></div>
+      </div>
+
+      <!-- Bullets -->
+      <div class="card-bullets">
+        <div class="cbullet"><span class="cbullet-icon">❌</span><span class="cbullet-text">Permiso rechazado o con comentarios</span></div>
+        <div class="cbullet"><span class="cbullet-icon">⏰</span><span class="cbullet-text">Permiso expirado o abandonado</span></div>
+        <div class="cbullet"><span class="cbullet-icon">🔍</span><span class="cbullet-text">Inspección fallida repetidamente</span></div>
+        <div class="cbullet"><span class="cbullet-icon">⚠️</span><span class="cbullet-text">Lien o multa en la propiedad</span></div>
+      </div>
+
+      <!-- Link box -->
+      <div class="card-link-box">
+        <div class="link-left">
+          <div class="link-eyebrow">Ver flyer completo</div>
+          <div class="link-url empty" id="sq-url">Agrega el link arriba →</div>
+        </div>
+        <div class="qr-container">
+          <div class="qr-pattern"></div>
+          <div id="sq-qr-placeholder" class="qr-placeholder">QR<br>code</div>
+          <img id="sq-qr-img" src="" alt="" style="display:none;position:relative;z-index:1">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer-info">
+    <div class="cf-phone">Llama o escribe · <span>(813) 531-3712</span></div>
+    <a href="https://wa.me/18135313712" class="cf-wa">💬 WhatsApp</a>
+  </div>
+</div>
+
+<!-- IMAGEN 2: STORY 9:16 (para Instagram Stories / WhatsApp Status) -->
+<div class="format-label" style="margin-top:8px">📱 Formato Story — Instagram / WhatsApp Status (1080×1920)</div>
+<div class="story-wrap">
+  <div class="story-card" id="card-story">
+    <div class="story-bg"></div>
+
+    <div class="story-inner">
+      <div class="story-header">
+        <div class="story-icon">🔑</div>
+        <div>
+          <div class="story-brand-name">LAMEZA PERMIT RESCUE</div>
+          <div class="story-brand-loc">Tampa Bay, Florida</div>
+        </div>
+      </div>
+
+      <div class="story-headline">¿Permiso<br>bloqueado?<br><em>Lo rescatamos.</em></div>
+      <p class="story-sub">Permisos rechazados · Inspecciones fallidas<br>Liens abiertos · Permisos expirados</p>
+
+      <div class="story-stats">
+        <div class="ss"><div class="ss-n">200+</div><div class="ss-l">Rescatados</div></div>
+        <div class="ss"><div class="ss-n">98%</div><div class="ss-l">Resolución</div></div>
+        <div class="ss"><div class="ss-n">15+</div><div class="ss-l">Años</div></div>
+      </div>
+
+      <div class="story-bullets">
+        <div class="sb"><span class="sb-icon">❌</span><span class="sb-text">Permiso rechazado o con comentarios</span></div>
+        <div class="sb"><span class="sb-icon">⏰</span><span class="sb-text">Permiso expirado o abandonado</span></div>
+        <div class="sb"><span class="sb-icon">🔍</span><span class="sb-text">Inspección fallida repetidamente</span></div>
+        <div class="sb"><span class="sb-icon">⚠️</span><span class="sb-text">Lien o multa — bloqueando venta</span></div>
+      </div>
+
+      <!-- Story link box -->
+      <div class="story-link-box">
+        <div class="sl-left">
+          <div class="sl-eyebrow">🔗 Ver flyer interactivo</div>
+          <div class="sl-url empty" id="st-url">Agrega el link arriba →</div>
+        </div>
+        <div class="sl-qr">
+          <img id="st-qr-img" src="" alt="" style="display:none">
+          <div id="st-qr-placeholder" style="font-size:.5rem;color:#bbb;text-align:center">QR<br>code</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateAll(url) {
+  if (!url || url.length < 8) {
+    // Reset
+    const sqUrl = document.getElementById('sq-url');
+    const stUrl = document.getElementById('st-url');
+    sqUrl.textContent = 'Agrega el link arriba →';
+    sqUrl.classList.add('empty');
+    stUrl.textContent = 'Agrega el link arriba →';
+    stUrl.classList.add('empty');
+    document.getElementById('sq-qr-img').style.display = 'none';
+    document.getElementById('sq-qr-placeholder').style.display = 'block';
+    document.getElementById('st-qr-img').style.display = 'none';
+    document.getElementById('st-qr-placeholder').style.display = 'block';
+    return;
+  }
+
+  // Update URL displays
+  const sqUrl = document.getElementById('sq-url');
+  sqUrl.textContent = url;
+  sqUrl.classList.remove('empty');
+
+  const stUrl = document.getElementById('st-url');
+  stUrl.textContent = url;
+  stUrl.classList.remove('empty');
+
+  // Generate QR codes
+  const qrBase = 'https://api.qrserver.com/v1/create-qr-code/?color=000000&bgcolor=ffffff&margin=2&data=';
+  const qrUrl = qrBase + encodeURIComponent(url);
+
+  const sqImg = document.getElementById('sq-qr-img');
+  sqImg.src = qrUrl + '&size=62x62';
+  sqImg.style.display = 'block';
+  document.getElementById('sq-qr-placeholder').style.display = 'none';
+
+  const stImg = document.getElementById('st-qr-img');
+  stImg.src = qrUrl + '&size=48x48';
+  stImg.style.display = 'block';
+  document.getElementById('st-qr-placeholder').style.display = 'none';
+}
+
+// Pre-fill if coming from flyer page
+const params = new URLSearchParams(window.location.search);
+const preUrl = params.get('url');
+if (preUrl) {
+  document.getElementById('linkInput').value = preUrl;
+  updateAll(preUrl);
+}
+</script>
+</body>
+</html>
