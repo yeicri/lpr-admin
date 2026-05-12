@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lameza Permit Rescue — Flyer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#c9a84c;
+  --gold-light:#e2c06b;
+  --black:#0a0a0a;
+  --dark:#141414;
+  --card:#1c1c1c;
+  --text:#f0f0f0;
+  --muted:#999;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--black);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ═══ FLYER WRAPPER ═══ */
+.flyer{
+  max-width:680px;
+  margin:0 auto;
+  position:relative;
+}
+
+/* ═══ HERO ═══ */
+.hero{
+  background:var(--dark);
+  padding:56px 40px 48px;
+  position:relative;
+  overflow:hidden;
+  border-bottom:3px solid var(--gold);
+}
+.hero::before{
+  content:'';
+  position:absolute;
+  top:-80px;right:-80px;
+  width:380px;height:380px;
+  background:radial-gradient(circle,rgba(201,168,76,.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero::after{
+  content:'LAMEZA';
+  position:absolute;
+  bottom:-20px;right:-10px;
+  font-size:9rem;font-weight:900;
+  color:rgba(255,255,255,.025);
+  letter-spacing:-4px;
+  pointer-events:none;
+  user-select:none;
+}
+
+.brand{
+  display:flex;align-items:center;gap:12px;margin-bottom:36px;
+}
+.brand-icon{
+  width:44px;height:44px;
+  background:var(--gold);
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;
+}
+.brand-name{
+  font-size:.9rem;font-weight:700;letter-spacing:2px;color:var(--gold);
+  line-height:1.1;
+}
+.brand-name span{color:#fff}
+
+.tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(201,168,76,.12);
+  border:1px solid rgba(201,168,76,.3);
+  color:var(--gold);
+  font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:5px 14px;border-radius:20px;
+  margin-bottom:20px;
+}
+.tag::before{content:'📍';font-size:.8rem}
+
+h1{
+  font-size:clamp(2.2rem,6vw,3.4rem);
+  font-weight:900;
+  line-height:1.1;
+  margin-bottom:12px;
+  letter-spacing:-1px;
+}
+h1 em{
+  font-style:normal;
+  color:var(--gold);
+  position:relative;
+}
+h1 em::after{
+  content:'';
+  position:absolute;
+  bottom:2px;left:0;right:0;
+  height:3px;
+  background:var(--gold);
+  opacity:.4;
+  border-radius:2px;
+}
+
+.hero-sub{
+  font-size:1.05rem;
+  color:#bbb;
+  line-height:1.65;
+  margin-bottom:32px;
+  max-width:480px;
+}
+
+.hero-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--gold);
+  color:var(--black);
+  font-weight:800;font-size:.92rem;
+  padding:15px 28px;
+  border-radius:10px;
+  text-decoration:none;
+  transition:.25s;
+  border:none;cursor:pointer;
+  letter-spacing:.3px;
+}
+.hero-cta:hover{background:var(--gold-light);transform:translateY(-2px)}
+.hero-cta-secondary{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;
+  border:1.5px solid rgba(255,255,255,.18);
+  color:#fff;
+  font-weight:600;font-size:.88rem;
+  padding:14px 24px;
+  border-radius:10px;
+  text-decoration:none;
+  transition:.25s;
+  margin-left:12px;
+}
+.hero-cta-secondary:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ═══ STATS BAR ═══ */
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  background:#111;
+  border-bottom:1px solid #222;
+}
+.stat{
+  padding:24px 20px;
+  text-align:center;
+  position:relative;
+}
+.stat+.stat::before{
+  content:'';
+  position:absolute;left:0;top:20%;bottom:20%;
+  width:1px;background:#2a2a2a;
+}
+.stat-n{
+  font-size:1.8rem;font-weight:900;color:var(--gold);
+  line-height:1;margin-bottom:4px;
+}
+.stat-l{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+
+/* ═══ PROBLEMS SECTION ═══ */
+.section{padding:40px 40px 36px}
+.sec-label{
+  font-size:.7rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--gold);
+  margin-bottom:10px;
+}
+.sec-title{
+  font-size:1.45rem;font-weight:800;
+  line-height:1.3;margin-bottom:24px;
+}
+.problems{display:grid;gap:10px}
+.prob{
+  display:flex;align-items:flex-start;gap:14px;
+  background:var(--card);
+  border:1px solid #252525;
+  border-radius:10px;
+  padding:16px 18px;
+  cursor:pointer;
+  transition:.2s;
+  position:relative;
+  overflow:hidden;
+}
+.prob:hover{border-color:rgba(201,168,76,.35);background:#222}
+.prob.active{border-color:var(--gold);background:#1f1a0f}
+.prob-icon{font-size:1.4rem;flex-shrink:0;margin-top:1px}
+.prob-body h4{font-size:.9rem;font-weight:700;margin-bottom:3px}
+.prob-body p{font-size:.82rem;color:var(--muted);line-height:1.5;display:none}
+.prob.active .prob-body p{display:block}
+.prob-arrow{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  color:var(--muted);font-size:.8rem;transition:.2s;
+}
+.prob.active .prob-arrow{transform:translateY(-50%) rotate(180deg);color:var(--gold)}
+
+/* ═══ SERVICES ═══ */
+.services-sec{
+  padding:0 40px 40px;
+}
+.services-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.svc{
+  background:var(--card);
+  border:1px solid #252525;
+  border-radius:10px;
+  padding:20px;
+  transition:.25s;
+  cursor:default;
+}
+.svc:hover{border-color:rgba(201,168,76,.4);transform:translateY(-2px)}
+.svc-icon{font-size:1.6rem;margin-bottom:10px}
+.svc-name{font-size:.88rem;font-weight:700;margin-bottom:4px}
+.svc-price{font-size:.8rem;color:var(--gold);font-weight:600}
+
+/* ═══ PROCESS ═══ */
+.process-sec{
+  background:#0f0f0f;
+  padding:40px;
+  border-top:1px solid #1e1e1e;
+  border-bottom:1px solid #1e1e1e;
+}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.step{text-align:center;padding:16px 12px}
+.step-num{
+  width:44px;height:44px;
+  background:var(--gold);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:1rem;color:var(--black);
+  margin:0 auto 12px;
+}
+.step h4{font-size:.85rem;font-weight:700;margin-bottom:6px}
+.step p{font-size:.78rem;color:var(--muted);line-height:1.5}
+
+/* ═══ TESTIMONIAL ═══ */
+.testimony-sec{
+  padding:40px;
+  position:relative;
+  overflow:hidden;
+}
+.testimony-slider{
+  display:flex;gap:16px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  padding-bottom:4px;
+}
+.testimony-slider::-webkit-scrollbar{display:none}
+.tcard{
+  flex:0 0 calc(100% - 0px);
+  scroll-snap-align:start;
+  background:var(--card);
+  border:1px solid #252525;
+  border-radius:12px;
+  padding:28px;
+}
+.stars{color:var(--gold);font-size:1rem;margin-bottom:12px;letter-spacing:2px}
+.tcard p{font-size:.92rem;color:#ccc;line-height:1.65;margin-bottom:16px;font-style:italic}
+.tcard-author{font-size:.82rem;font-weight:700;color:#fff}
+.tcard-loc{font-size:.78rem;color:var(--muted);margin-top:2px}
+.result-badge{
+  display:inline-block;background:rgba(46,204,113,.12);
+  border:1px solid rgba(46,204,113,.3);color:#2ecc71;
+  font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;
+  margin-bottom:12px;
+}
+.dots{
+  display:flex;justify-content:center;gap:6px;margin-top:16px;
+}
+.dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#333;cursor:pointer;transition:.2s;
+}
+.dot.active{background:var(--gold);width:18px;border-radius:3px}
+
+/* ═══ CTA BOTTOM ═══ */
+.cta-sec{
+  background:linear-gradient(135deg,#1a1200 0%,#0d0d0d 60%);
+  border-top:1px solid rgba(201,168,76,.2);
+  padding:48px 40px;
+  text-align:center;
+}
+.cta-sec h2{
+  font-size:1.7rem;font-weight:900;margin-bottom:12px;
+  letter-spacing:-.5px;
+}
+.cta-sec h2 span{color:var(--gold)}
+.cta-sec p{color:#aaa;font-size:.95rem;margin-bottom:32px;line-height:1.6}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-wa{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#25d366;color:#fff;
+  font-weight:700;font-size:.92rem;
+  padding:15px 28px;border-radius:10px;
+  text-decoration:none;transition:.2s;
+}
+.btn-wa:hover{background:#1fb855;transform:translateY(-2px)}
+.btn-outline{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;
+  border:1.5px solid rgba(201,168,76,.4);
+  color:var(--gold);
+  font-weight:600;font-size:.9rem;
+  padding:14px 24px;border-radius:10px;
+  text-decoration:none;transition:.2s;
+}
+.btn-outline:hover{background:rgba(201,168,76,.08);border-color:var(--gold)}
+
+/* ═══ FOOTER ═══ */
+.flyer-footer{
+  background:#080808;
+  padding:24px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid #1a1a1a;
+  flex-wrap:wrap;gap:12px;
+}
+.foot-brand{font-size:.82rem;font-weight:700;color:var(--gold);letter-spacing:1.5px}
+.foot-contact{font-size:.8rem;color:var(--muted)}
+.foot-contact a{color:var(--muted);text-decoration:none}
+.foot-contact a:hover{color:var(--gold)}
+
+/* ═══ SHARE BANNER (imagen con espacio para link) ═══ */
+.share-banner{
+  margin:0;
+  background:linear-gradient(135deg,#0d0900 0%,#1a1200 40%,#0d0d0d 100%);
+  border:2px solid rgba(201,168,76,.25);
+  border-radius:0;
+  padding:40px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:32px;
+}
+.share-left h3{
+  font-size:1.1rem;font-weight:800;margin-bottom:6px;
+}
+.share-left p{font-size:.85rem;color:#aaa;line-height:1.5}
+.qr-box{
+  background:#fff;
+  border-radius:12px;
+  padding:12px;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  min-width:120px;
+}
+.qr-img{
+  width:88px;height:88px;
+  background:#f0f0f0;
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.6rem;color:#999;text-align:center;
+  position:relative;overflow:hidden;
+}
+/* QR pattern simulation */
+.qr-img::before{
+  content:'';
+  position:absolute;inset:4px;
+  background-image:
+    repeating-linear-gradient(0deg,#000 0,#000 4px,transparent 4px,transparent 8px),
+    repeating-linear-gradient(90deg,#000 0,#000 4px,transparent 4px,transparent 8px);
+  opacity:.15;
+}
+.qr-label{font-size:.65rem;color:#666;font-weight:600;text-align:center}
+
+.link-input-wrap{
+  display:flex;flex-direction:column;gap:6px;margin-top:16px;
+}
+.link-input-wrap label{font-size:.72rem;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+.link-input{
+  background:#111;
+  border:1.5px solid rgba(201,168,76,.3);
+  color:#fff;
+  border-radius:8px;
+  padding:10px 14px;
+  font-size:.85rem;
+  font-family:monospace;
+  outline:none;
+  transition:.2s;
+  width:100%;
+}
+.link-input:focus{border-color:var(--gold)}
+.link-input::placeholder{color:#444}
+.copy-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--gold);color:var(--black);
+  font-weight:700;font-size:.8rem;
+  padding:9px 18px;border-radius:7px;
+  border:none;cursor:pointer;transition:.2s;
+  align-self:flex-start;
+}
+.copy-btn:hover{background:var(--gold-light)}
+.copy-btn.copied{background:#2ecc71;color:#fff}
+
+/* RESPONSIVE */
+@media(max-width:520px){
+  .hero{padding:40px 24px 36px}
+  .section,.services-sec,.process-sec,.testimony-sec,.cta-sec,.flyer-footer{padding-left:24px;padding-right:24px}
+  .services-grid{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
+  .share-banner{grid-template-columns:1fr;padding:28px 24px}
+  .hero-cta-secondary{display:none}
+  h1{letter-spacing:-.5px}
+}
+</style>
+</head>
+<body>
+
+<div class="flyer">
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="brand">
+      <div class="brand-icon">🔑</div>
+      <div class="brand-name">LAMEZA<br><span>PERMIT RESCUE</span></div>
+    </div>
+
+    <div class="tag">Tampa Bay, Florida</div>
+
+    <h1>Tu permiso está<br>bloqueado. <em>Lo rescatamos.</em></h1>
+
+    <p class="hero-sub">Permisos rechazados, comentarios sin respuesta, inspecciones fallidas, liens abiertos — te guiamos paso a paso hasta cerrar el caso.</p>
+
+    <div>
+      <a href="https://wa.me/18135313712?text=Hola+Lameza,+necesito+ayuda+con+un+permiso" target="_blank" class="hero-cta">
+        💬 WhatsApp Directo
+      </a>
+      <a href="https://lamezapermitrescue.com" target="_blank" class="hero-cta-secondary">
+        Ver sitio web →
+      </a>
+    </div>
+  </div>
+
+  <!-- ── STATS ── -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-n">200+</div>
+      <div class="stat-l">Permisos Rescatados</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">98%</div>
+      <div class="stat-l">Tasa de Resolución</div>
+    </div>
+    <div class="stat">
+      <div class="stat-n">15+</div>
+      <div class="stat-l">Años en Tampa Bay</div>
+    </div>
+  </div>
+
+  <!-- ── PROBLEMS ── -->
+  <div class="section">
+    <div class="sec-label">¿Tu situación?</div>
+    <h2 class="sec-title">Resolvemos estos problemas</h2>
+
+    <div class="problems">
+      <div class="prob active" onclick="toggleProb(this)">
+        <div class="prob-icon">❌</div>
+        <div class="prob-body">
+          <h4>Permiso rechazado o lleno de comentarios</h4>
+          <p>La ciudad devolvió el permiso con correcciones técnicas que no sabes cómo responder. Nosotros preparamos el paquete de correcciones y lo resubmitimos.</p>
+        </div>
+        <span class="prob-arrow">▼</span>
+      </div>
+      <div class="prob" onclick="toggleProb(this)">
+        <div class="prob-icon">⏰</div>
+        <div class="prob-body">
+          <h4>Permiso expirado o abandonado</h4>
+          <p>Tu contratista desapareció y el permiso quedó abierto. Nosotros lo reactivamos, coordinamos las inspecciones pendientes y lo cerramos correctamente.</p>
+        </div>
+        <span class="prob-arrow">▼</span>
+      </div>
+      <div class="prob" onclick="toggleProb(this)">
+        <div class="prob-icon">🔍</div>
+        <div class="prob-body">
+          <h4>Inspección fallida repetidamente</h4>
+          <p>Fallaste 2 o más inspecciones y no entiendes qué quiere el inspector. Te entregamos un diagnóstico claro y un plan de corrección específico.</p>
+        </div>
+        <span class="prob-arrow">▼</span>
+      </div>
+      <div class="prob" onclick="toggleProb(this)">
+        <div class="prob-icon">⚠️</div>
+        <div class="prob-body">
+          <h4>Lien o multa en la propiedad</h4>
+          <p>Un permiso abierto está bloqueando la venta o refinanciamiento de tu propiedad. Construimos la estrategia para resolverlo antes del cierre.</p>
+        </div>
+        <span class="prob-arrow">▼</span>
+      </div>
+      <div class="prob" onclick="toggleProb(this)">
+        <div class="prob-icon">❓</div>
+        <div class="prob-body">
+          <h4>No sabes qué pasa con tu permiso</h4>
+          <p>Nadie te explica qué está mal. Nuestro diagnóstico ($150–$300) te da un mapa claro: qué falta, quién lo hace y cuánto cuesta resolverlo.</p>
+        </div>
+        <span class="prob-arrow">▼</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SERVICES ── -->
+  <div class="services-sec">
+    <div class="sec-label">Servicios</div>
+    <h2 class="sec-title">¿Qué incluye?</h2>
+    <div class="services-grid">
+      <div class="svc">
+        <div class="svc-icon">🔬</div>
+        <div class="svc-name">Permit Diagnostic</div>
+        <div class="svc-price">$150 – $300</div>
+      </div>
+      <div class="svc">
+        <div class="svc-icon">🛠️</div>
+        <div class="svc-name">Partial Rescue</div>
+        <div class="svc-price">$800 – $1,800</div>
+      </div>
+      <div class="svc">
+        <div class="svc-icon">🚀</div>
+        <div class="svc-name">Full Rescue</div>
+        <div class="svc-price">$2,500+</div>
+      </div>
+      <div class="svc">
+        <div class="svc-icon">⚡</div>
+        <div class="svc-name">Electrical · Plumbing · Building</div>
+        <div class="svc-price">Tampa Bay Area</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PROCESS ── -->
+  <div class="process-sec">
+    <div class="sec-label">Proceso</div>
+    <h2 class="sec-title">Simple. Claro. Sin confusión.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Envías tu caso</h4>
+        <p>Número de permiso, dirección y descripción del problema.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Diagnóstico en 24h</h4>
+        <p>Revisamos el historial completo e identificamos cada problema.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Permiso cerrado</h4>
+        <p>Coordinamos, corregimos, inspeccionamos y cerramos el caso.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TESTIMONIALS ── -->
+  <div class="testimony-sec">
+    <div class="sec-label">Casos Reales</div>
+    <h2 class="sec-title">Clientes que recuperaron su proyecto</h2>
+    <div class="testimony-slider" id="slider">
+      <div class="tcard">
+        <div class="result-badge">✓ Permiso Aprobado</div>
+        <div class="stars">★★★★★</div>
+        <p>"Llevaba 8 meses con mi permiso de remodelación paralizado. Yeimy revisó el caso en 24 horas y en 6 semanas el permiso avanzó."</p>
+        <div class="tcard-author">Carlos M.</div>
+        <div class="tcard-loc">Tampa, FL · Remodelación residencial</div>
+      </div>
+      <div class="tcard">
+        <div class="result-badge">✓ Proyecto Desbloqueado</div>
+        <div class="stars">★★★★★</div>
+        <p>"Teníamos una adición detenida. Lameza coordinó todo sin que yo tuviera que llamar a nadie. Profesionales de verdad."</p>
+        <div class="tcard-author">Maria & Jose R.</div>
+        <div class="tcard-loc">Brandon, FL · Adición de cuarto</div>
+      </div>
+      <div class="tcard">
+        <div class="result-badge">✓ Lien Resuelto</div>
+        <div class="stars">★★★★★</div>
+        <p>"Mi propiedad tenía un lien desde 2019. Yeimy resolvió el caso en tiempo récord y pude cerrar la venta."</p>
+        <div class="tcard-author">Ana L.</div>
+        <div class="tcard-loc">Hillsborough County · Permiso abierto / lien</div>
+      </div>
+      <div class="tcard">
+        <div class="result-badge">✓ Inspección Aprobada</div>
+        <div class="stars">★★★★★</div>
+        <p>"Fallé 3 inspecciones seguidas. Después de una consulta entendí exactamente qué corregir. Primera inspección después: aprobada."</p>
+        <div class="tcard-author">Roberto P.</div>
+        <div class="tcard-loc">New Tampa, FL · Inspección eléctrica</div>
+      </div>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <!-- ── CTA ── -->
+  <div class="cta-sec">
+    <h2>¿Tu permiso está<br><span>bloqueado?</span></h2>
+    <p>Escríbenos hoy. El diagnóstico inicial es gratis.<br>Respondemos en menos de 24 horas.</p>
+    <div class="cta-btns">
+      <a href="https://wa.me/18135313712?text=Hola,+quiero+consultar+sobre+mi+permiso" target="_blank" class="btn-wa">
+        💬 WhatsApp — (813) 531-3712
+      </a>
+      <a href="https://lamezapermitrescue.com/#contact" target="_blank" class="btn-outline">
+        📋 Enviar mi caso →
+      </a>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="flyer-footer">
+    <div class="foot-brand">LAMEZA PERMIT RESCUE</div>
+    <div class="foot-contact">
+      <a href="tel:8135313712">(813) 531-3712</a> &nbsp;·&nbsp;
+      <a href="https://lamezapermitrescue.com" target="_blank">lamezapermitrescue.com</a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SHARE IMAGE — espacio para pegar el link
+       ══════════════════════════════════════════ -->
+  <div class="share-banner" id="shareBanner">
+    <div class="share-left">
+      <h3>Comparte este flyer</h3>
+      <p style="margin-bottom:20px">Pega el link de este flyer para que tus contactos puedan abrirlo directamente en su celular o computadora.</p>
+
+      <div class="link-input-wrap">
+        <label>🔗 Link del flyer</label>
+        <input
+          type="url"
+          class="link-input"
+          id="flyerLink"
+          placeholder="https://..."
+          oninput="updateLink(this.value)"
+        >
+        <button class="copy-btn" id="copyBtn" onclick="copyLink()">
+          📋 Copiar link
+        </button>
+      </div>
+
+      <div style="margin-top:20px;padding:14px 16px;background:#111;border-radius:8px;border:1px solid #222">
+        <div style="font-size:.72rem;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Vista previa del link</div>
+        <div id="linkPreview" style="font-size:.82rem;color:#888;font-family:monospace;word-break:break-all">
+          Escribe el link arriba para verlo aquí
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+      <div class="qr-box" id="qrBox">
+        <div class="qr-img" id="qrPlaceholder">
+          <span style="position:relative;z-index:1;line-height:1.3">QR<br>aquí</span>
+        </div>
+        <div class="qr-label">Escanea para<br>abrir el flyer</div>
+      </div>
+      <div style="font-size:.72rem;color:#555;text-align:center;max-width:120px">Se genera automáticamente al pegar el link</div>
+    </div>
+  </div>
+
+</div><!-- /flyer -->
+
+<script>
+// ── ACCORDION PROBLEMS ──
+function toggleProb(el){
+  document.querySelectorAll('.prob').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── TESTIMONIAL SLIDER ──
+const slider = document.getElementById('slider');
+const dotsWrap = document.getElementById('dots');
+const cards = slider.querySelectorAll('.tcard');
+let current = 0;
+
+cards.forEach((_,i)=>{
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.onclick = ()=>goTo(i);
+  dotsWrap.appendChild(d);
+});
+
+function goTo(i){
+  current = i;
+  slider.scrollTo({left: slider.offsetWidth * i, behavior:'smooth'});
+  document.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('active',j===i));
+}
+
+slider.addEventListener('scroll',()=>{
+  const i = Math.round(slider.scrollLeft / slider.offsetWidth);
+  if(i !== current){ current=i; document.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('active',j===i)); }
+});
+
+// Auto-advance
+setInterval(()=>goTo((current+1)%cards.length), 5000);
+
+// ── QR GENERATION ──
+function updateLink(url){
+  const preview = document.getElementById('linkPreview');
+  const qrBox = document.getElementById('qrPlaceholder');
+
+  if(!url || url.length < 10){
+    preview.textContent = 'Escribe el link arriba para verlo aquí';
+    preview.style.color = '#888';
+    qrBox.innerHTML = '<span style="position:relative;z-index:1;line-height:1.3">QR<br>aquí</span>';
+    return;
+  }
+  preview.textContent = url;
+  preview.style.color = '#c9a84c';
+
+  // Generate QR via free API
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=88x88&data=' + encodeURIComponent(url) + '&color=000000&bgcolor=ffffff&margin=4';
+  qrBox.innerHTML = '<img src="' + qrUrl + '" width="88" height="88" style="border-radius:4px" alt="QR Code">';
+}
+
+// ── COPY LINK ──
+function copyLink(){
+  const input = document.getElementById('flyerLink');
+  const btn = document.getElementById('copyBtn');
+  if(!input.value){ input.focus(); return; }
+  navigator.clipboard.writeText(input.value).then(()=>{
+    btn.textContent = '✅ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = '📋 Copiar link'; btn.classList.remove('copied'); },2000);
+  });
+}
+</script>
+
+</body>
+</html>
