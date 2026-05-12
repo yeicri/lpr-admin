@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LPR Admin — Lead Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--black:#0d0d0d;--dark:#1a1a1a;--gold:#c9a84c;--cream:#f5f0e8;--text:#2c2c2c;--muted:#666;--border:#e0d9ce;--red:#e74c3c;--green:#2ecc71;--blue:#3498db;--orange:#f39c12}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0ece3;color:var(--text);min-height:100vh}
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--black);display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:#1a1a1a;border:1px solid rgba(201,168,76,.3);border-radius:16px;padding:48px 40px;width:360px;text-align:center}
+.login-logo{font-size:1.1rem;font-weight:800;color:var(--gold);letter-spacing:2px;margin-bottom:4px}
+.login-logo span{color:#fff}
+.login-sub{color:#666;font-size:.85rem;margin-bottom:32px}
+.login-box input{width:100%;padding:14px 16px;background:#0d0d0d;border:1px solid #333;border-radius:8px;color:#fff;font-size:1rem;margin-bottom:12px;outline:none}
+.login-box input:focus{border-color:var(--gold)}
+.login-btn{width:100%;padding:14px;background:var(--gold);color:#0d0d0d;border:none;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;margin-top:4px}
+.login-err{color:var(--red);font-size:.85rem;margin-top:12px;display:none}
+/* NAV */
+nav{background:var(--black);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(201,168,76,.2)}
+.nav-logo{font-size:.95rem;font-weight:800;color:var(--gold);letter-spacing:2px}
+.nav-logo span{color:#fff}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-user{color:#888;font-size:.85rem}
+.logout-btn{background:transparent;border:1px solid #333;color:#888;padding:7px 16px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:.2s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+/* LAYOUT */
+.app{display:none;min-height:calc(100vh - 60px)}
+.container{max-width:1300px;margin:0 auto;padding:28px 24px}
+/* SUMMARY CARDS */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+.s-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px 24px;position:relative;overflow:hidden}
+.s-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold)}
+.s-card.blue::before{background:var(--blue)}
+.s-card.green::before{background:var(--green)}
+.s-card.orange::before{background:var(--orange)}
+.s-card.red::before{background:var(--red)}
+.s-num{font-size:2rem;font-weight:800;color:var(--text)}
+.s-label{font-size:.78rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+/* TOOLBAR */
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.toolbar input[type=text]{padding:10px 16px;border:1px solid var(--border);border-radius:8px;font-size:.9rem;min-width:220px;outline:none;background:#fff}
+.toolbar input:focus{border-color:var(--gold)}
+.toolbar select{padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:.88rem;background:#fff;outline:none;cursor:pointer}
+.btn{padding:10px 20px;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer;border:none;transition:.2s}
+.btn-gold{background:var(--gold);color:#0d0d0d}
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--text)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-danger{background:transparent;border:1px solid var(--red);color:var(--red)}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-sm{padding:6px 14px;font-size:.8rem}
+/* TABLE */
+.table-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.table-head{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.table-title{font-size:1rem;font-weight:700}
+.count-badge{background:var(--gold);color:#0d0d0d;font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:20px;margin-left:8px}
+table{width:100%;border-collapse:collapse}
+th{padding:12px 16px;text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);background:#faf8f4;border-bottom:1px solid var(--border)}
+td{padding:14px 16px;font-size:.88rem;border-bottom:1px solid #f4f0ea;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fdf9f3}
+.lead-id{font-weight:700;color:var(--gold);font-size:.82rem}
+.lead-name{font-weight:600}
+.lead-phone{color:var(--muted);font-size:.85rem}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase}
+.badge-new{background:rgba(52,152,219,.15);color:#2980b9}
+.badge-progress{background:rgba(243,156,18,.15);color:#d68910}
+.badge-done{background:rgba(46,204,113,.15);color:#27ae60}
+.badge-pending{background:rgba(231,76,60,.15);color:#c0392b}
+.badge-elec{background:rgba(52,152,219,.1);color:#2980b9}
+.badge-build{background:rgba(243,156,18,.1);color:#d68910}
+.badge-plumb{background:rgba(46,204,113,.1);color:#27ae60}
+.badge-mech{background:rgba(155,89,182,.1);color:#8e44ad}
+.badge-other{background:rgba(127,140,141,.1);color:#5d6d7e}
+.complexity{font-size:.8rem;color:var(--muted)}
+.fee{font-weight:700;color:var(--text)}
+.actions{display:flex;gap:6px;flex-wrap:nowrap}
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty .icon{font-size:3rem;margin-bottom:16px}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:36px;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted);line-height:1}
+.modal h2{font-size:1.2rem;font-weight:800;margin-bottom:24px;padding-right:24px}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.modal-field{margin-bottom:0}
+.modal-field.full{grid-column:1/-1}
+.modal-field label{display:block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:.92rem;outline:none;font-family:inherit}
+.modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus{border-color:var(--gold)}
+.modal-actions{display:flex;gap:12px;margin-top:24px;justify-content:flex-end}
+.modal-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;margin-right:6px;background:#f0ece3;color:var(--muted)}
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--dark);color:#fff;padding:14px 20px;border-radius:10px;font-size:.9rem;z-index:9999;display:none;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.toast.show{display:flex}
+.toast.success::before{content:'✅';margin-right:4px}
+.toast.error::before{content:'❌';margin-right:4px}
+/* NOTES AREA */
+.notes-preview{max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:.82rem}
+@media(max-width:900px){.modal-grid{grid-template-columns:1fr}table{display:block;overflow-x:auto}.toolbar{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">LAMEZA<span> PERMIT RESCUE</span></div>
+    <div class="login-sub">Admin Panel — Staff Only</div>
+    <input type="text" id="loginUser" placeholder="Username" autocomplete="username">
+    <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-err" id="loginErr">Invalid credentials. Try again.</div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">LAMEZA<span> ADMIN</span></div>
+  <div class="nav-right">
+    <span class="nav-user" id="navUser"></span>
+    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+  </div>
+</nav>
+
+<!-- APP -->
+<div class="app" id="appContent">
+  <div class="container">
+
+    <!-- SUMMARY -->
+    <div class="summary" id="summaryCards"></div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="🔍  Search by name, phone, address, permit…" oninput="renderTable()">
+      <select id="filterStatus" onchange="renderTable()">
+        <option value="">All Statuses</option>
+        <option>New</option>
+        <option>In Progress</option>
+        <option>Pending Payment</option>
+        <option>Done</option>
+      </select>
+      <select id="filterDisc" onchange="renderTable()">
+        <option value="">All Disciplines</option>
+        <option>Building</option>
+        <option>Electrical</option>
+        <option>Plumbing</option>
+        <option>Mechanical</option>
+        <option>Stormwater</option>
+        <option>Zoning</option>
+      </select>
+      <select id="filterComp" onchange="renderTable()">
+        <option value="">All Complexity</option>
+        <option>Simple</option>
+        <option>Medium</option>
+        <option>Complex</option>
+      </select>
+      <button class="btn btn-gold" onclick="openModal()">+ New Lead</button>
+      <button class="btn btn-outline" onclick="exportCSV()">Export CSV</button>
+      <button class="btn btn-outline btn-danger btn-sm" onclick="clearAllLeads()" style="margin-left:auto">🗑 Clear All</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div class="table-head">
+        <div><span class="table-title">Leads</span><span class="count-badge" id="countBadge">0</span></div>
+        <div style="font-size:.82rem;color:var(--muted)">Click a row to view/edit</div>
+      </div>
+      <div id="tableBody"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2 id="modalTitle">New Lead</h2>
+    <div class="modal-grid">
+      <div class="modal-field"><label>ID</label><input type="text" id="m_id" readonly style="background:#f9f9f9;color:#999"></div>
+      <div class="modal-field"><label>Date</label><input type="date" id="m_date"></div>
+      <div class="modal-field"><label>Name *</label><input type="text" id="m_name" placeholder="Full name"></div>
+      <div class="modal-field"><label>Phone *</label><input type="tel" id="m_phone" placeholder="(813) 000-0000"></div>
+      <div class="modal-field full"><label>Email</label><input type="email" id="m_email" placeholder="email@example.com"></div>
+      <div class="modal-field full"><label>Address *</label><input type="text" id="m_address" placeholder="123 Main St, Tampa FL"></div>
+      <div class="modal-field"><label>Permit #</label><input type="text" id="m_permit" placeholder="BLD-2024-XXXXX"></div>
+      <div class="modal-field"><label>Discipline</label>
+        <select id="m_discipline">
+          <option>Building</option><option>Electrical</option><option>Plumbing</option>
+          <option>Mechanical</option><option>Stormwater</option><option>Zoning</option>
+        </select>
+      </div>
+      <div class="modal-field"><label>Status</label>
+        <select id="m_status">
+          <option>New</option><option>In Progress</option><option>Pending Payment</option><option>Done</option>
+        </select>
+      </div>
+      <div class="modal-field"><label>Complexity</label>
+        <select id="m_complexity" onchange="autoFee()">
+          <option>Simple</option><option>Medium</option><option>Complex</option>
+        </select>
+      </div>
+      <div class="modal-field full"><label>Fee ($)</label><input type="number" id="m_fee" placeholder="1500"></div>
+      <div class="modal-field full"><label>Issue Description</label><textarea id="m_desc" rows="3" placeholder="What happened?"></textarea></div>
+      <div class="modal-field full"><label>Internal Notes</label><textarea id="m_notes" rows="3" placeholder="Team notes, follow-up actions…"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" id="deleteBtn" onclick="deleteLead()" style="display:none">Delete</button>
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-gold" onclick="saveLead()">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── AUTH ───────────────────────────────────────────────────────────────────
+const USERS = {admin:'lpr2024!',yeicri:'lpr2024!'};
+let currentUser = null;
+
+function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(USERS[u]&&USERS[u]===p){
+    currentUser=u;
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('appContent').style.display='block';
+    document.getElementById('navUser').textContent='👤 '+u;
+    renderSummary();renderTable();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+  }
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doLogin();});
+
+function doLogout(){
+  currentUser=null;
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('appContent').style.display='none';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginErr').style.display='none';
+}
+
+// ─── DATA ────────────────────────────────────────────────────────────────────
+function getLeads(){return JSON.parse(localStorage.getItem('lpr_leads')||'[]');}
+function saveLeads(arr){localStorage.setItem('lpr_leads',JSON.stringify(arr));}
+
+// ─── SUMMARY ─────────────────────────────────────────────────────────────────
+function renderSummary(){
+  const leads=getLeads();
+  const total=leads.length;
+  const newL=leads.filter(l=>l.status==='New').length;
+  const progress=leads.filter(l=>l.status==='In Progress').length;
+  const done=leads.filter(l=>l.status==='Done').length;
+  const revenue=leads.filter(l=>l.status==='Done').reduce((s,l)=>s+(parseFloat(l.fee)||0),0);
+  const totalPipe=leads.reduce((s,l)=>s+(parseFloat(l.fee)||0),0);
+  document.getElementById('summaryCards').innerHTML=
+    card('Total Leads',total,'')+
+    card('New',newL,'blue')+
+    card('In Progress',progress,'orange')+
+    card('Done',done,'green')+
+    card('Revenue','$'+revenue.toLocaleString(),'green')+
+    card('Pipeline','$'+totalPipe.toLocaleString(),'');
+}
+function card(label,val,cls){return '<div class="s-card '+cls+'"><div class="s-num">'+val+'</div><div class="s-label">'+label+'</div></div>';}
+
+// ─── TABLE ────────────────────────────────────────────────────────────────────
+function renderTable(){
+  const leads=getLeads();
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const fs=document.getElementById('filterStatus').value;
+  const fd=document.getElementById('filterDisc').value;
+  const fc=document.getElementById('filterComp').value;
+
+  let filtered=leads.filter(l=>{
+    const match=!q||(l.name||'').toLowerCase().includes(q)||(l.phone||'').includes(q)||(l.address||'').toLowerCase().includes(q)||(l.permit||'').toLowerCase().includes(q)||(l.email||'').toLowerCase().includes(q);
+    const ms=!fs||l.status===fs;
+    const md=!fd||l.discipline===fd;
+    const mc=!fc||l.complexity===fc;
+    return match&&ms&&md&&mc;
+  });
+
+  document.getElementById('countBadge').textContent=filtered.length;
+
+  if(!filtered.length){
+    document.getElementById('tableBody').innerHTML='<div class="empty"><div class="icon">📋</div><p>No leads found.</p></div>';
+    return;
+  }
+
+  let html='<table><thead><tr><th>ID</th><th>Date</th><th>Name / Phone</th><th>Address</th><th>Discipline</th><th>Status</th><th>Complexity</th><th>Fee</th><th>Notes</th><th>Actions</th></tr></thead><tbody>';
+  filtered.forEach(l=>{
+    const disc=l.discipline||'Building';
+    const dcls=disc==='Electrical'?'elec':disc==='Building'?'build':disc==='Plumbing'?'plumb':disc==='Mechanical'?'mech':'other';
+    const scls=l.status==='New'?'badge-new':l.status==='In Progress'?'badge-progress':l.status==='Done'?'badge-done':'badge-pending';
+    html+=`<tr onclick="openModal('${l.id}')" style="cursor:pointer">
+      <td><span class="lead-id">${l.id||''}</span></td>
+      <td>${l.date||''}</td>
+      <td><div class="lead-name">${esc(l.name||'')}</div><div class="lead-phone">${esc(l.phone||'')}</div></td>
+      <td>${esc(l.address||'')}</td>
+      <td><span class="badge badge-${dcls}">${esc(disc)}</span></td>
+      <td><span class="badge ${scls}">${esc(l.status||'New')}</span></td>
+      <td><span class="complexity">${esc(l.complexity||'Medium')}</span></td>
+      <td><span class="fee">$${Number(l.fee||0).toLocaleString()}</span></td>
+      <td><div class="notes-preview">${esc(l.notes||'—')}</div></td>
+      <td><div class="actions" onclick="event.stopPropagation()">
+        <a href="tel:${l.phone}" class="btn btn-sm btn-outline" title="Call">📞</a>
+        <a href="https://wa.me/1${(l.phone||'').replace(/\D/g,'')}" target="_blank" class="btn btn-sm btn-outline" title="WhatsApp">💬</a>
+        <button class="btn btn-sm btn-outline" onclick="changeStatus('${l.id}')" title="Next Status">🔄</button>
+      </div></td>
+    </tr>`;
+  });
+  html+='</tbody></table>';
+  document.getElementById('tableBody').innerHTML=html;
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function changeStatus(id){
+  const leads=getLeads();
+  const order=['New','In Progress','Pending Payment','Done'];
+  const l=leads.find(x=>x.id===id);
+  if(!l)return;
+  const i=order.indexOf(l.status);
+  l.status=order[(i+1)%order.length];
+  saveLeads(leads);renderTable();renderSummary();
+  showToast('Status updated to '+l.status,'success');
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+let editingId=null;
+
+function openModal(id){
+  editingId=id||null;
+  const overlay=document.getElementById('modalOverlay');
+  overlay.classList.add('open');
+  if(id){
+    const l=getLeads().find(x=>x.id===id);
+    if(!l)return;
+    document.getElementById('modalTitle').textContent='Edit Lead';
+    document.getElementById('deleteBtn').style.display='block';
+    document.getElementById('m_id').value=l.id||'';
+    document.getElementById('m_date').value=l.date||'';
+    document.getElementById('m_name').value=l.name||'';
+    document.getElementById('m_phone').value=l.phone||'';
+    document.getElementById('m_email').value=l.email||'';
+    document.getElementById('m_address').value=l.address||'';
+    document.getElementById('m_permit').value=l.permit||'';
+    document.getElementById('m_discipline').value=l.discipline||'Building';
+    document.getElementById('m_status').value=l.status||'New';
+    document.getElementById('m_complexity').value=l.complexity||'Medium';
+    document.getElementById('m_fee').value=l.fee||'';
+    document.getElementById('m_desc').value=l.desc||'';
+    document.getElementById('m_notes').value=l.notes||'';
+  } else {
+    document.getElementById('modalTitle').textContent='New Lead';
+    document.getElementById('deleteBtn').style.display='none';
+    document.getElementById('m_id').value='LPR-'+Math.floor(1000+Math.random()*9000);
+    document.getElementById('m_date').value=new Date().toISOString().split('T')[0];
+    document.getElementById('m_name').value='';
+    document.getElementById('m_phone').value='';
+    document.getElementById('m_email').value='';
+    document.getElementById('m_address').value='';
+    document.getElementById('m_permit').value='';
+    document.getElementById('m_discipline').value='Building';
+    document.getElementById('m_status').value='New';
+    document.getElementById('m_complexity').value='Medium';
+    document.getElementById('m_fee').value='1500';
+    document.getElementById('m_desc').value='';
+    document.getElementById('m_notes').value='';
+  }
+}
+
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');editingId=null;}
+function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal();}
+
+function autoFee(){
+  const c=document.getElementById('m_complexity').value;
+  document.getElementById('m_fee').value=c==='Simple'?1000:c==='Medium'?1500:3000;
+}
+
+function saveLead(){
+  const name=document.getElementById('m_name').value.trim();
+  const phone=document.getElementById('m_phone').value.trim();
+  const address=document.getElementById('m_address').value.trim();
+  if(!name||!phone||!address){showToast('Name, phone & address are required','error');return;}
+  const lead={
+    id:document.getElementById('m_id').value,
+    date:document.getElementById('m_date').value,
+    name,phone,
+    email:document.getElementById('m_email').value.trim(),
+    address,
+    permit:document.getElementById('m_permit').value.trim(),
+    discipline:document.getElementById('m_discipline').value,
+    status:document.getElementById('m_status').value,
+    complexity:document.getElementById('m_complexity').value,
+    fee:parseFloat(document.getElementById('m_fee').value)||1500,
+    desc:document.getElementById('m_desc').value.trim(),
+    notes:document.getElementById('m_notes').value.trim()
+  };
+  let leads=getLeads();
+  if(editingId){leads=leads.map(l=>l.id===editingId?lead:l);showToast('Lead updated!','success');}
+  else{leads.unshift(lead);showToast('Lead created!','success');}
+  saveLeads(leads);closeModal();renderTable();renderSummary();
+}
+
+function deleteLead(){
+  if(!confirm('Delete this lead? This cannot be undone.'))return;
+  let leads=getLeads().filter(l=>l.id!==editingId);
+  saveLeads(leads);closeModal();renderTable();renderSummary();
+  showToast('Lead deleted','error');
+}
+
+function clearAllLeads(){
+  if(!confirm('Delete ALL leads? This cannot be undone.'))return;
+  localStorage.removeItem('lpr_leads');renderTable();renderSummary();
+  showToast('All leads cleared','error');
+}
+
+// ─── EXPORT ───────────────────────────────────────────────────────────────────
+function exportCSV(){
+  const leads=getLeads();
+  if(!leads.length){showToast('No leads to export','error');return;}
+  const headers=['ID','Date','Name','Phone','Email','Address','Permit','Discipline','Status','Complexity','Fee','Description','Notes'];
+  const rows=leads.map(l=>[l.id,l.date,l.name,l.phone,l.email,l.address,l.permit,l.discipline,l.status,l.complexity,l.fee,l.desc,l.notes].map(v=>'"'+(String(v||'').replace(/"/g,'""'))+'"').join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='lpr-leads-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  showToast('CSV exported!','success');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show '+(type||'');
+  setTimeout(()=>t.className='toast',3000);
+}
+
+// ─── DEMO DATA (first run) ────────────────────────────────────────────────────
+if(!localStorage.getItem('lpr_leads')){
+  const demo=[
+    {id:'LPR-1001',name:'Carlos Mendez',phone:'8135551234',email:'carlos@email.com',address:'4201 N Armenia Ave, Tampa FL',permit:'BLD-2024-00431',discipline:'Electrical',status:'New',date:'2026-05-01',complexity:'Medium',fee:1500,desc:'Failed final electrical inspection. Missing GFCI outlets in kitchen.',notes:''},
+    {id:'LPR-1002',name:'Maria Ramirez',phone:'8135559876',email:'maria@email.com',address:'8820 W Hillsborough Ave, Tampa FL',permit:'PLB-2024-00289',discipline:'Plumbing',status:'In Progress',date:'2026-04-28',complexity:'Simple',fee:1000,desc:'Rough-in inspection failed. Pipe sizing discrepancy.',notes:'Spoke with inspector — needs updated plans'},
+    {id:'LPR-1003',name:'Jose Garcia',phone:'8135554567',email:'',address:'1234 Dale Mabry Hwy, Tampa FL',permit:'BLD-2023-09921',discipline:'Building',status:'Done',date:'2026-04-10',complexity:'Complex',fee:3000,desc:'Open permit since 2023. Contractor abandoned project.',notes:'Closed April 30. Client very happy.'},
+    {id:'LPR-1004',name:'Ana Lopez',phone:'7275551122',email:'ana@email.com',address:'510 Central Ave, St Pete FL',permit:'',discipline:'Stormwater',status:'Pending Payment',date:'2026-05-05',complexity:'Medium',fee:1500,desc:'Drainage violation. Hillsborough County flagged.',notes:'Waiting for 50% deposit'}
+  ];
+  localStorage.setItem('lpr_leads',JSON.stringify(demo));
+}
+</script>
+</body>
+</html>
